@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>試卷2（最終版）：Regression / Applications / 分類｜3D 曲面＋機械臂示意｜自檢</title>
+  <style>
+    :root{--bg:#0b0f14;--card:#121922;--ink:#e8eef7;--muted:#9fb3c8;--brand:#71b7ff;--ok:#44d07b;--bad:#ff6b6b}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+    .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+    header{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    h1{margin:0;font-size:clamp(20px,3vw,26px)}
+    .btn{appearance:none;border:none;border-radius:10px;padding:8px 12px;background:#1f2a3a;color:var(--ink);cursor:pointer}
+    .btn.primary{background:var(--brand);color:#041424;font-weight:700}
+    .card{background:var(--card);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    h2{margin:0 0 8px 0;font-size:20px}
+    .q{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin:14px 0;padding:12px;border:1px solid #223044;border-radius:12px}
+    canvas{width:100%;height:320px;background:#0e141d;border-radius:10px;border:1px solid #223044}
+    .opts{display:grid;gap:8px}
+    .opts label{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border:1px solid #2a3547;border-radius:10px;cursor:pointer}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12px;background:#162232;color:var(--muted);border:1px solid #263246}
+    .result{white-space:pre-wrap;background:#0e141d;border:1px solid #223044;border-radius:12px;padding:12px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .status{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid #263246;background:#162232;color:#9fb3c8}
+    .badge.ok{background:#153b2c;border-color:#2b8a57;color:#aef1c2}
+    .badge.err{background:#3b1b1b;border-color:#b54646;color:#ffc9c9}
+    .plot3d{width:100%;height:320px;border:1px solid #223044;border-radius:10px;background:#0e141d}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>試卷 2 — Regression / Applications / 分類（最終版）</h1>
+    <div class="row">
+      <button class="btn" id="btnSave">下載此頁（.html）</button>
+      <span class="pill" id="buildInfo"></span>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="status">
+      <span class="badge" id="chk-canvas">Canvas 渲染：待檢測</span>
+      <span class="badge" id="chk-3d">3D 曲面：未啟用</span>
+      <span class="badge" id="chk-plotly">Plotly 載入：未啟用</span>
+    </div>
+    <p class="pill">提示：網址加 <code>?3d=1</code> 會啟用 3D 曲面；否則預設 2D 等高線。</p>
+  </section>
+
+  <!-- Part A: Regression 基礎 -->
+  <section class="card" id="partA">
+    <h2>Part A — Regression 基礎（看圖作答，單選）</h2>
+
+    <div class="q" data-id="A.Q1">
+      <canvas></canvas>
+      <div>
+        <strong>Q1. 下圖為散點、擬合線與殘差（垂直虛線）。此任務類型是？</strong>
+        <div class="opts">
+          <label><input type="radio" name="A.Q1" value="A">A. 分類（Classification）</label>
+          <label><input type="radio" name="A.Q1" value="B">B. 回歸（Regression）</label>
+        </div>
+        <p class="pill">圖中顯示：y = w x + b、殘差 = 觀測 − 預測</p>
+      </div>
+    </div>
+
+    <div class="q" data-id="A.Q2">
+      <canvas></canvas>
+      <div>
+        <strong>Q2. 兩條回歸線 A（白）/B（青）擬合同一批散點。哪條 <em>RMSE</em> 較小？</strong>
+        <div class="opts">
+          <label><input type="radio" name="A.Q2" value="A">A. 線 A（白）</label>
+          <label><input type="radio" name="A.Q2" value="B">B. 線 B（青）</label>
+        </div>
+        <p class="pill">提示：看整體殘差長短與分佈</p>
+      </div>
+    </div>
+
+    <div class="q" data-id="A.Q3">
+      <canvas></canvas>
+      <div>
+        <strong>Q3. 此直線的參數為 y = w x + b。哪個參數決定斜率？</strong>
+        <div class="opts">
+          <label><input type="radio" name="A.Q3" value="A">A. b（截距）</label>
+          <label><input type="radio" name="A.Q3" value="B">B. w（斜率）</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"><button class="btn primary" data-grade="A">批改 Part A</button><span class="pill" id="scoreA">尚未作答</span></div>
+    <div class="result" id="outA"></div>
+  </section>
+
+  <!-- Part B -->
+  <section class="card" id="partB">
+    <h2>Part B — Regression Applications（情境判斷，單選）</h2>
+
+    <div class="q" data-id="B.Q1">
+      <canvas></canvas>
+      <div>
+        <strong>Q1. 自駕車方向盤角度隨時間連續變化（角度曲線）。這屬於？</strong>
+        <div class="opts">
+          <label><input type="radio" name="B.Q1" value="A">A. 分類</label>
+          <label><input type="radio" name="B.Q1" value="B">B. 回歸</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="q" data-id="B.Q2">
+      <canvas></canvas>
+      <div>
+        <strong>Q2. 機械手臂控制：輸入 (x,y)，輸出兩關節角度 (α₁, α₂)。此問題性質？</strong>
+        <div class="opts">
+          <label><input type="radio" name="B.Q2" value="A">A. 多輸出回歸</label>
+          <label><input type="radio" name="B.Q2" value="B">B. 多類別分類</label>
+        </div>
+        <p class="pill">α₁∈[−90°, 90°]、α₂∈[0°, 135°]；終端點為 target(x,y)</p>
+      </div>
+    </div>
+
+    <div class="q" data-id="B.Q3">
+      <div class="plot3d" id="surfaceOrCanvas"></div>
+      <div>
+        <strong>Q3. y=f(x₁,x₂) 的響應面。最佳建模方式？（<span id="hint3d"></span>）</strong>
+        <div class="opts">
+          <label><input type="radio" name="B.Q3" value="A">A. 非線性回歸 / 響應面建模</label>
+          <label><input type="radio" name="B.Q3" value="B">B. 二元分類</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"><button class="btn primary" data-grade="B">批改 Part B</button><span class="pill" id="scoreB">尚未作答</span></div>
+    <div class="result" id="outB"></div>
+  </section>
+
+  <!-- Part C -->
+  <section class="card" id="partC">
+    <h2>Part C — 分類任務（看圖判斷，單選）</h2>
+
+    <div class="q" data-id="C.Q1">
+      <canvas></canvas>
+      <div>
+        <strong>Q1. 兩群資料以垂直線分隔，紅叉為錯分點。這條線稱為？</strong>
+        <div class="opts">
+          <label><input type="radio" name="C.Q1" value="A">A. Regression line</label>
+          <label><input type="radio" name="C.Q1" value="B">B. Decision boundary</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="q" data-id="C.Q2">
+      <canvas></canvas>
+      <div>
+        <strong>Q2. 影像中以框標出所有人臉位置。這屬於？</strong>
+        <div class="opts">
+          <label><input type="radio" name="C.Q2" value="A">A. 檢測（Detection）</label>
+          <label><input type="radio" name="C.Q2" value="B">B. 分類（Classification）</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"><button class="btn primary" data-grade="C">批改 Part C</button><span class="pill" id="scoreC">尚未作答</span></div>
+    <div class="result" id="outC"></div>
+  </section>
+
+  <section class="card"><div class="row"><button class="btn" id="btnReset">全部清空作答</button></div></section>
+</div>
+
+<script>
+const _params = new URLSearchParams(location.search); const _use3d = _params.get('3d')==='1';
+const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+$('#buildInfo').textContent = new Date().toLocaleString('zh-TW') + ' 生成（Canvas 可離線；3D 需連網）';
+$('#hint3d').textContent = _use3d? '3D 旋轉模式（?3d=1）' : '2D 模式（?3d=1 可切 3D）';
+
+// === 繪圖工具 ===
+function drawAxes(ctx,W,H,pad,xlabel,ylabel,minX,maxX,minY,maxY){
+  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#223044'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  for(let i=0;i<=4;i++){const tx=pad+i*(W-2*pad)/4; ctx.beginPath(); ctx.moveTo(tx,pad); ctx.lineTo(tx,H-pad); ctx.stroke();}
+  for(let i=0;i<=4;i++){const ty=pad+i*(H-2*pad)/4; ctx.beginPath(); ctx.moveTo(pad,ty); ctx.lineTo(W-pad,ty); ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.strokeStyle='#41536b'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText(xlabel,W/2-20,H-8); ctx.save(); ctx.translate(12,H/2); ctx.rotate(-Math.PI/2); ctx.fillText(ylabel,0,0); ctx.restore();
+}
+function scaler(min,max,pxMin,pxMax,flip=false){ return v=>{ const t=(v-min)/((max-min)||1); const px=pxMin+t*(pxMax-pxMin); return flip? (pxMax - (px-pxMin)) : px; }; }
+function randn(mu=0,sigma=1){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return mu+sigma*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+// === A：回歸 ===
+function drawRegressionWithResiduals(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  const xs=[...Array(40)].map((_,i)=>i/9); const pts=xs.map(x=>[x, 2.0*x+1.0 + randn(0,0.35)]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs); const ys=pts.map(p=>p[1]); const minY=Math.min(...ys), maxY=Math.max(...ys);
+  const x2px=scaler(minX,maxX,pad,W-pad,false); const y2px=scaler(minY,maxY,pad,H-pad,true);
+  drawAxes(ctx,W,H,pad,'x','y',minX,maxX,minY,maxY);
+  const w=1.95, b=1.10;
+  ctx.fillStyle='#71b7ff'; pts.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),4,0,Math.PI*2); ctx.fill();});
+  ctx.strokeStyle='#e8eef7'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x2px(minX),y2px(w*minX+b)); ctx.lineTo(x2px(maxX),y2px(w*maxX+b)); ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText(`y = ${w.toFixed(2)}x + ${b.toFixed(2)}`, pad+6, pad+14);
+  ctx.strokeStyle='#9fb3c8'; ctx.setLineDash([6,4]);
+  pts.filter((_,i)=>i%6===0).forEach(([x,y])=>{ const yp=w*x+b; ctx.beginPath(); ctx.moveTo(x2px(x), y2px(y)); ctx.lineTo(x2px(x), y2px(yp)); ctx.stroke(); });
+  ctx.setLineDash([]);
+}
+function drawTwoFitsCompare(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  const xs=[...Array(40)].map((_,i)=>i/9); const pts=xs.map(x=>[x, 2.0*x+1.0 + randn(0,0.5)]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs); const ys=pts.map(p=>p[1]); const minY=Math.min(...ys), maxY=Math.max(...ys);
+  const x2px=scaler(minX,maxX,pad,W-pad,false); const y2px=scaler(minY,maxY,pad,H-pad,true);
+  drawAxes(ctx,W,H,pad,'x','y',minX,maxX,minY,maxY);
+  ctx.fillStyle='#71b7ff'; pts.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),4,0,Math.PI*2); ctx.fill();});
+  const A={w:2.0,b:1.0}; ctx.strokeStyle='#ffffff'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x2px(minX),y2px(A.w*minX+A.b)); ctx.lineTo(x2px(maxX),y2px(A.w*maxX+A.b)); ctx.stroke();
+  const B={w:1.5,b:1.5}; ctx.strokeStyle='#66e6d4'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x2px(minX),y2px(B.w*minX+B.b)); ctx.lineTo(x2px(maxX),y2px(B.w*maxX+B.b)); ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('A: y=2.00x+1.00（白）', pad+6, pad+14);
+  ctx.fillText('B: y=1.50x+1.50（青）', pad+6, pad+30);
+}
+function drawSlopeIntercept(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  const xs=[0,5]; const minX=0,maxX=5,minY=0,maxY=6; const x2px=scaler(minX,maxX,pad,W-pad,false), y2px=scaler(minY,maxY,pad,H-pad,true);
+  drawAxes(ctx,W,H,pad,'x','y',minX,maxX,minY,maxY);
+  const w=0.8,b=1.2; ctx.strokeStyle='#e8eef7'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x2px(xs[0]),y2px(w*xs[0]+b)); ctx.lineTo(x2px(xs[1]),y2px(w*xs[1]+b)); ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText(`y = ${w.toFixed(2)}x + ${b.toFixed(2)}`, pad+6, pad+14);
+}
+
+// === B：應用 ===
+function drawSteering(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  drawAxes(ctx,W,H,pad,'time','angle (deg)',0,10,-45,45);
+  ctx.strokeStyle='#71b7ff'; ctx.lineWidth=2.5; ctx.beginPath();
+  for(let i=0;i<=100;i++){ const t=i/10; const ang=25*Math.sin(t*0.9)+10*Math.cos(t*0.25); const x=pad+i*(W-2*pad)/100; const y=H-pad - (ang+45)/90*(H-2*pad); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);} ctx.stroke();
+}
+function drawRobotArm(canvas){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight;
+  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
+  const cx=W*0.34, cy=H*0.72; const L1=H*0.26, L2=H*0.22; const a1= -0.7, a2= 1.05;
+  ctx.fillStyle='#9fb3c8'; ctx.font='14px system-ui'; ctx.fillText('α₁ ∈ [−90°, 90°]   α₂ ∈ [0°, 135°]', 12, 20);
+  ctx.strokeStyle='#223044'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(cx-20,cy); ctx.lineTo(cx+L1+L2+30, cy); ctx.moveTo(cx,cy+30); ctx.lineTo(cx, cy-L1-L2-30); ctx.stroke();
+  const x1=cx + L1*Math.cos(a1), y1=cy + L1*Math.sin(a1); const x2=x1 + L2*Math.cos(a1+a2), y2=y1 + L2*Math.sin(a1+a2);
+  ctx.strokeStyle='#71b7ff'; ctx.lineWidth=10; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const drawArc=(ox,oy,r,from,to,label)=>{ ctx.strokeStyle='#ffd166'; ctx.lineWidth=3; ctx.beginPath(); for(let t=from;t<=to;t+=0.02){ const x=ox+r*Math.cos(t), y=oy+r*Math.sin(t); if(t===from) ctx.moveTo(x,y); else ctx.lineTo(x,y);} ctx.stroke(); ctx.strokeStyle='#ffd166'; for(let t=from;t<=to;t+=Math.PI/12){ const x=ox+r*Math.cos(t), y=oy+r*Math.sin(t); const x2=ox+(r+8)*Math.cos(t), y2=oy+(r+8)*Math.sin(t); ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x2,y2); ctx.stroke(); } ctx.fillStyle='#ffd166'; ctx.font='16px system-ui'; ctx.fillText(label, ox+(r+14)*Math.cos((from+to)/2), oy+(r+14)*Math.sin((from+to)/2)); };
+  drawArc(cx,cy,46, -Math.PI/2, a1, 'α₁');
+  drawArc(x1,y1,42, a1, a1+a2, 'α₂');
+  const tx = cx + L1*0.95, ty = cy - L2*0.55; ctx.fillStyle='#ff6b6b'; ctx.beginPath(); ctx.arc(tx,ty,6,0,Math.PI*2); ctx.fill(); ctx.setLineDash([6,4]); ctx.strokeStyle='#ff6b6b'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(tx,ty); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle='#ff6b6b'; ctx.font='14px system-ui'; ctx.fillText('target (x,y)', tx+8, ty-8);
+}
+
+// 2D 等高線（備援）
+function drawResponseContours(host){
+  const canvas=document.createElement('canvas'); canvas.width=host.clientWidth; canvas.height=host.clientHeight; host.replaceChildren(canvas);
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const pad=40, left=pad, top=pad, width=W-2*pad, height=H-2*pad;
+  const xMin=-2, xMax=2, yMin=-2, yMax=2;
+  const f=(x,y)=> Math.sin(0.9*x)*Math.cos(0.9*y) - 0.25*x + 0.35*y + 0.15*x*y;
+  const nx=140, ny=100;
+  for(let i=0;i<nx;i++){
+    for(let j=0;j<ny;j++){
+      const x=xMin + (xMax-xMin)*i/(nx-1), y=yMin + (yMax-yMin)*j/(ny-1); const z=f(x,y);
+      const n=(z+2.2)/4.4; const c=Math.max(0,Math.min(1,n));
+      const r=Math.floor(20+180*c), g=Math.floor(60+150*c), b=Math.floor(220-120*c);
+      ctx.fillStyle=`rgb(${r},${g},${b})`;
+      const px=left + i*width/nx, py=top + j*height/ny; ctx.fillRect(px,py,width/nx+1,height/ny+1);
+    }
+  }
+  ctx.strokeStyle='#e8eef7'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+  const levels=[]; for(let k=-1.8;k<=1.8;k+=0.3) levels.push(k);
+  levels.forEach(L=>{ ctx.beginPath(); let started=false; for(let i=0;i<nx;i++){ for(let j=0;j<ny;j++){
+    const x=xMin + (xMax-xMin)*i/(nx-1), y=yMin + (yMax-yMin)*j/(ny-1); const z=Math.round(f(x,y)*10)/10; if(Math.abs(z-L)<1e-9){ const px=left+i*width/nx, py=top+j*height/ny; if(!started){ctx.moveTo(px,py); started=true;} else ctx.lineTo(px,py);} } } ctx.stroke(); });
+  ctx.setLineDash([]);
+  ctx.strokeStyle='#41536b'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(left,top+height); ctx.lineTo(left+width,top+height); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(left,top+height); ctx.lineTo(left,top); ctx.stroke();
+  ctx.fillStyle='#e8eef7'; ctx.font='14px system-ui'; ctx.fillText('x₁', left+width-12, top+height-8); ctx.fillText('y = f(x₁,x₂)', left+6, top-10);
+  ctx.save(); ctx.translate(left-14, top+height/2); ctx.rotate(-Math.PI/2); ctx.fillText('x₂', 0,0); ctx.restore();
+  return canvas;
+}
+
+// 3D 曲面（主角）
+function drawResponseSurface3D(host){
+  const div=document.createElement('div'); div.className='plot3d'; host.replaceChildren(div);
+  const xMin=-2, xMax=2, yMin=-2, yMax=2, nx=60, ny=60;
+  const xs = Array.from({length:nx}, (_,i)=> xMin + (xMax-xMin)*i/(nx-1));
+  const ys = Array.from({length:ny}, (_,j)=> yMin + (yMax-yMin)*j/(ny-1));
+  const f=(x,y)=> Math.sin(0.9*x)*Math.cos(0.9*y) - 0.25*x + 0.35*y + 0.15*x*y;
+  const Z = ys.map(y => xs.map(x => f(x,y)));
+  const data=[{type:'surface', x:xs, y:ys, z:Z, colorscale:'Portland', contours:{z:{show:true,usecolormap:true,project:{z:true}}}}];
+  const layout={margin:{l:0,r:0,t:0,b:0}, scene:{xaxis:{title:'x₁'}, yaxis:{title:'x₂'}, zaxis:{title:'y'}}, paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)'};
+  function render(){ Plotly.newPlot(div, data, layout, {displayModeBar:false, responsive:true}); check3D(div); }
+  if(window.Plotly){ render(); } else { const s=document.createElement('script'); s.src='https://cdn.plot.ly/plotly-2.35.2.min.js'; s.onload=render; s.onerror=()=>{ mark('chk-plotly', false, 'Plotly 載入失敗'); drawResponseContours(host); }; document.head.appendChild(s); }
+  return div;
+}
+
+// === C：分類 ===
+function drawClustersWithBoundary(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  const pos=[...Array(60)].map(()=>[randn(1.0,0.45), randn(1.0,0.45)]);
+  const neg=[...Array(60)].map(()=>[randn(2.6,0.45), randn(2.5,0.5)]);
+  const all=pos.concat(neg); const xs=all.map(p=>p[0]), ys=all.map(p=>p[1]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs), minY=Math.min(...ys), maxY=Math.max(...ys);
+  const x2px=scaler(minX,maxX,pad,W-pad,false), y2px=scaler(minY,maxY,pad,H-pad,true);
+  drawAxes(ctx,W,H,pad,'x₁','x₂',minX,maxX,minY,maxY);
+  ctx.fillStyle='#ffb86b'; pos.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),4,0,Math.PI*2); ctx.fill();});
+  ctx.fillStyle='#71b7ff'; neg.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),4,0,Math.PI*2); ctx.fill();});
+  const thr=1.8; ctx.strokeStyle='#e8eef7'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x2px(thr),pad); ctx.lineTo(x2px(thr),H-pad); ctx.stroke();
+  ctx.fillStyle='#ff6b6b'; ctx.font='14px system-ui'; const mis=[pos[2], neg[3]]; mis.forEach(([x,y])=>{ctx.beginPath(); ctx.moveTo(x2px(x)-6,y2px(y)-6); ctx.lineTo(x2px(x)+6,y2px(y)+6); ctx.moveTo(x2px(x)+6,y2px(y)-6); ctx.lineTo(x2px(x)-6,y2px(y)+6); ctx.strokeStyle='#ff6b6b'; ctx.stroke();});
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('decision boundary', x2px(thr)+6, pad+14);
+}
+function drawDetection(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight;
+  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H); ctx.fillStyle='#162232'; ctx.fillRect(40,40,W-60,H-80);
+  ctx.strokeStyle='#71b7ff'; ctx.lineWidth=2; [[90,80,120,120],[280,120,120,140],[460,70,130,140]].forEach(([x,y,w,h])=>ctx.strokeRect(x,y,w,h));
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('face detection: bounding boxes', 12, 20);
+}
+
+// === 初始化 ===
+function mark(id, ok, msgOK='OK', msgErr='Error'){
+  const el=$( '#' + id ); if(!el) return;
+  el.classList.remove('ok','err'); el.textContent = (ok? '✅ ': '❌ ') + (ok? msgOK: msgErr);
+  el.classList.add(ok? 'ok':'err','badge');
+}
+function checkCanvasOne(canvas){
+  try{
+    const ctx=canvas.getContext('2d'); const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    // 粗略：抽樣 100 個像素，若幾乎全 0 視為沒畫
+    let nonZero=0; for(let i=0;i<100;i++){ const k=(Math.floor(Math.random()*data.length/4)*4); if(data[k]+data[k+1]+data[k+2]!==0) nonZero++; }
+    return nonZero>5;
+  }catch(e){ return false; }
+}
+function checkCanvasAll(){
+  const canv=$$('canvas');
+  const ok = canv.length>0 && canv.every(c=>checkCanvasOne(c));
+  mark('chk-canvas', ok, 'Canvas 渲染 OK', 'Canvas 未成功渲染');
+}
+function check3D(div){
+  if(!div){ mark('chk-3d', false, '3D 未啟用', '3D 未啟用'); return; }
+  // Plotly 會在 div 上掛一些屬性，簡單判斷
+  const ok = !!(window.Plotly && div._fullLayout);
+  mark('chk-plotly', !!window.Plotly, 'Plotly 載入 OK', 'Plotly 載入失敗');
+  mark('chk-3d', ok, '3D 曲面 OK（可旋轉）', '3D 曲面未渲染');
+}
+
+(function init(){
+  // A
+  const Qa=$$('#partA .q'); drawRegressionWithResiduals(Qa[0].querySelector('canvas')); drawTwoFitsCompare(Qa[1].querySelector('canvas')); drawSlopeIntercept(Qa[2].querySelector('canvas'));
+  // B：角度 & 機械臂
+  const Qb=$$('#partB .q'); drawSteering(Qb[0].querySelector('canvas')); drawRobotArm(Qb[1].querySelector('canvas'));
+  // B：曲面（3D 或 2D）
+  const host=$('#surfaceOrCanvas');
+  if(_use3d){ const div = drawResponseSurface3D(host); } else { const c = drawResponseContours(host); }
+  // C
+  const Qc=$$('#partC .q'); drawClustersWithBoundary(Qc[0].querySelector('canvas')); drawDetection(Qc[1].querySelector('canvas'));
+  // 延遲檢測（等繪製完成）
+  setTimeout(checkCanvasAll, 400);
+})();
+
+// === 批改 & 儲存 ===
+const keyA={'A.Q1':'B','A.Q2':'A','A.Q3':'B'}; const expA={ 'A.Q1':'回歸：連續輸出；圖含擬合線與殘差。', 'A.Q2':'A 線更貼近點群，RMSE 較小。', 'A.Q3':'斜率由 w 決定；b 為截距。'};
+const keyB={'B.Q1':'B','B.Q2':'A','B.Q3':'A'}; const expB={ 'B.Q1':'角度為連續值 → 回歸。', 'B.Q2':'輸出 (α₁,α₂) 連續 → 多輸出回歸。', 'B.Q3':'非線性響應面應用非線性回歸/響應面方法。'};
+const keyC={'C.Q1':'B','C.Q2':'A'}; const expC={ 'C.Q1':'Decision boundary：將空間劃分為不同類別的界線。', 'C.Q2':'偵測是定位與框出物件位置，不是判斷是哪一類。'};
+const storeKey='ml-quiz2-final-v1';
+function saveState(){ const data={}; $$('input[type=radio]:checked').forEach(r=>data[r.name]=r.value); localStorage.setItem(storeKey, JSON.stringify(data)); }
+function loadState(){ try{ const data=JSON.parse(localStorage.getItem(storeKey)||'{}'); Object.entries(data).forEach(([k,v])=>{ const el=document.querySelector(`input[name="${k}"][value="${v}"]`); if(el) el.checked=true;}); }catch(e){} }
+function resetState(){ localStorage.removeItem(storeKey); location.reload(); }
+$('#btnReset').addEventListener('click', resetState); addEventListener('change', saveState); addEventListener('input', saveState); loadState();
+function grade(part,key,exp){ const out=$('#out'+part), score=$('#score'+part); let correct=0,total=Object.keys(key).length, lines=[]; Object.entries(key).forEach(([q,ans])=>{ const chosen=document.querySelector(`input[name="${q}"]:checked`); if(!chosen){ lines.push(`${q}: ⚠️ 未作答`); return; } const ok=chosen.value===ans; if(ok) correct++; lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+chosen.value+'；正解: '+ans+'）'}`); lines.push('解析：'+exp[q]);}); score.textContent=`總分：${correct} / ${total}`; out.textContent=lines.join('\\n'); }
+$$('button[data-grade]').forEach(btn=>btn.addEventListener('click',e=>{ const p=e.currentTarget.getAttribute('data-grade'); if(p==='A') grade('A',keyA,expA); if(p==='B') grade('B',keyB,expB); if(p==='C') grade('C',keyC,expC); saveState(); }));
+
+// 下載本頁
+$('#btnSave').addEventListener('click',()=>{ const blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz2_final_3d_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); });
+</script>
+</body>
+</html>
