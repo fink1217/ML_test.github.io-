@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>機器學習 Ch1 互動練習 — 分類 / 回歸 / 監督 vs 非監督 / 人臉任務</title>
+  <style>
+    :root{--bg:#0b0f14;--card:#121922;--ink:#e8eef7;--muted:#9fb3c8;--brand:#71b7ff;--ok:#44d07b;--bad:#ff6b6b;--warn:#ffd166}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+    .wrap{max-width:980px;margin:40px auto;padding:0 16px}
+    header{display:flex;gap:16px;align-items:center;margin-bottom:20px}
+    header h1{margin:0;font-size:clamp(20px,3vw,28px)}
+    .card{background:var(--card);border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    h2{margin:0 0 8px 0;font-size:20px}
+    h3{margin:12px 0 6px 0;font-size:16px;color:var(--brand)}
+    .muted{color:var(--muted)}
+    .grid{display:grid;gap:12px}
+    @media(min-width:720px){.grid-2{grid-template-columns:1fr 1fr}}
+    .q{padding:12px;border:1px solid #243041;border-radius:12px}
+    .q strong{display:block;margin-bottom:6px}
+    .opts{display:grid;gap:8px;margin-top:6px}
+    .opts label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid #2a3547;border-radius:10px;cursor:pointer}
+    .opts input{margin-top:2px}
+    .btn{appearance:none;border:none;border-radius:12px;padding:10px 14px;background:#1f2a3a;color:var(--ink);cursor:pointer}
+    .btn.primary{background:var(--brand);color:#041424;font-weight:700}
+    .btn.inline{padding:6px 10px;border-radius:8px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .result{white-space:pre-wrap;background:#0e141d;border:1px solid #223044;border-radius:12px;padding:12px}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12px;background:#162232;color:var(--muted);border:1px solid #263246}
+    .ok{color:var(--ok)} .bad{color:var(--bad)} .warn{color:#111;background:var(--warn)}
+    .hr{height:1px;background:#203044;margin:16px 0}
+    footer{margin:28px 0 40px;color:var(--muted);font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>機器學習 Chapter 1 — 互動練習</h1>
+      <span class="pill">單頁版 · 可離線使用</span>
+    </header>
+
+    <div class="card">
+      <p class="muted">主題：<strong>分類 vs 回歸、監督 vs 非監督、人臉任務型態</strong>。選好答案後按下「批改」，系統會即時給分與解析。此網頁為單檔設計，可直接放到 GitHub Pages / Netlify / 任一靜態主機。</p>
+      <div class="row">
+        <button class="btn inline" id="btnSave">下載此頁（.html）</button>
+        <button class="btn inline" id="btnReset">全部清空作答</button>
+      </div>
+    </div>
+
+    <!-- Part A: Classification vs Regression -->
+    <section class="card" id="partA">
+      <h2>Part A — 分類 vs 回歸（單選題）</h2>
+      <p class="muted">A=分類 · B=回歸</p>
+      <div class="grid grid-2">
+        <div class="q" data-id="A.Q1">
+          <strong>Q1. 郵件是否為垃圾信？</strong>
+          <div class="opts">
+            <label><input type="radio" name="A.Q1" value="A">A. 分類</label>
+            <label><input type="radio" name="A.Q1" value="B">B. 回歸</label>
+          </div>
+        </div>
+        <div class="q" data-id="A.Q2">
+          <strong>Q2. 預測房價？</strong>
+          <div class="opts">
+            <label><input type="radio" name="A.Q2" value="A">A. 分類</label>
+            <label><input type="radio" name="A.Q2" value="B">B. 回歸</label>
+          </div>
+        </div>
+        <div class="q" data-id="A.Q3">
+          <strong>Q3. 根據臉部特徵判斷是誰？</strong>
+          <div class="opts">
+            <label><input type="radio" name="A.Q3" value="A">A. 分類</label>
+            <label><input type="radio" name="A.Q3" value="B">B. 回歸</label>
+          </div>
+        </div>
+        <div class="q" data-id="A.Q4">
+          <strong>Q4. 自駕車方向盤角度預測？</strong>
+          <div class="opts">
+            <label><input type="radio" name="A.Q4" value="A">A. 分類</label>
+            <label><input type="radio" name="A.Q4" value="B">B. 回歸</label>
+          </div>
+        </div>
+        <div class="q" data-id="A.Q5">
+          <strong>Q5. 預測明日最高溫度？</strong>
+          <div class="opts">
+            <label><input type="radio" name="A.Q5" value="A">A. 分類</label>
+            <label><input type="radio" name="A.Q5" value="B">B. 回歸</label>
+          </div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <button class="btn primary" data-grade="A">批改 Part A</button>
+        <span class="pill" id="scoreA">尚未作答</span>
+      </div>
+      <div class="result" id="outA"></div>
+    </section>
+
+    <!-- Part B: Face Task Types -->
+    <section class="card" id="partB">
+      <h2>Part B — 人臉任務型態（單選題）</h2>
+      <p class="muted">A=分類（是誰） · B=驗證（是否同一人） · C=檢測（找位置） · D=搜尋（在庫找最像）</p>
+      <div class="grid grid-2">
+        <div class="q" data-id="B.Q1">
+          <strong>Q1. 手機解鎖：比對當前臉與註冊臉是否一致</strong>
+          <div class="opts">
+            <label><input type="radio" name="B.Q1" value="A">A</label>
+            <label><input type="radio" name="B.Q1" value="B">B</label>
+            <label><input type="radio" name="B.Q1" value="C">C</label>
+            <label><input type="radio" name="B.Q1" value="D">D</label>
+          </div>
+        </div>
+        <div class="q" data-id="B.Q2">
+          <strong>Q2. 監視器畫面標出所有人臉的框</strong>
+          <div class="opts">
+            <label><input type="radio" name="B.Q2" value="A">A</label>
+            <label><input type="radio" name="B.Q2" value="B">B</label>
+            <label><input type="radio" name="B.Q2" value="C">C</label>
+            <label><input type="radio" name="B.Q2" value="D">D</label>
+          </div>
+        </div>
+        <div class="q" data-id="B.Q3">
+          <strong>Q3. 將陌生人臉丟到大型人臉庫，找出最像的前5名</strong>
+          <div class="opts">
+            <label><input type="radio" name="B.Q3" value="A">A</label>
+            <label><input type="radio" name="B.Q3" value="B">B</label>
+            <label><input type="radio" name="B.Q3" value="C">C</label>
+            <label><input type="radio" name="B.Q3" value="D">D</label>
+          </div>
+        </div>
+        <div class="q" data-id="B.Q4">
+          <strong>Q4. 從 10 位已知員工中判斷照片是誰</strong>
+          <div class="opts">
+            <label><input type="radio" name="B.Q4" value="A">A</label>
+            <label><input type="radio" name="B.Q4" value="B">B</label>
+            <label><input type="radio" name="B.Q4" value="C">C</label>
+            <label><input type="radio" name="B.Q4" value="D">D</label>
+          </div>
+        </div>
+        <div class="q" data-id="B.Q5">
+          <strong>Q5. 螢幕出現人臉就警示，並框出來</strong>
+          <div class="opts">
+            <label><input type="radio" name="B.Q5" value="A">A</label>
+            <label><input type="radio" name="B.Q5" value="B">B</label>
+            <label><input type="radio" name="B.Q5" value="C">C</label>
+            <label><input type="radio" name="B.Q5" value="D">D</label>
+          </div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <button class="btn primary" data-grade="B">批改 Part B</button>
+        <span class="pill" id="scoreB">尚未作答</span>
+      </div>
+      <div class="result" id="outB"></div>
+    </section>
+
+    <!-- Part C: Supervised vs Unsupervised (T/F) -->
+    <section class="card" id="partC">
+      <h2>Part C — 監督式 vs 非監督式（O/X）</h2>
+      <p class="muted">可填 O/X 或 True/False</p>
+      <div class="grid">
+        <div class="q" data-id="C.Q1"><strong>Q1.</strong> 非監督式學習沒有標籤（沒有正確答案）。<div class="opts"> <input type="text" name="C.Q1" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q2"><strong>Q2.</strong> 回歸任務通常屬於監督式學習。<div class="opts"> <input type="text" name="C.Q2" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q3"><strong>Q3.</strong> 分群（clustering）是非監督式學習的典型任務。<div class="opts"> <input type="text" name="C.Q3" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q4"><strong>Q4.</strong> 分類的輸出是連續值。<div class="opts"> <input type="text" name="C.Q4" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q5"><strong>Q5.</strong> 決策邊界（decision boundary）概念只存在於回歸。<div class="opts"> <input type="text" name="C.Q5" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q6"><strong>Q6.</strong> 可用非監督式學習做資料探索與可視化。<div class="opts"> <input type="text" name="C.Q6" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q7"><strong>Q7.</strong> 模板匹配（Template Matching）是典型 ML 技術。<div class="opts"> <input type="text" name="C.Q7" placeholder="O / X"/></div></div>
+        <div class="q" data-id="C.Q8"><strong>Q8.</strong> SVM 與 k-NN 可出現在 PR 與 ML 的交集。<div class="opts"> <input type="text" name="C.Q8" placeholder="O / X"/></div></div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <button class="btn primary" data-grade="C">批改 Part C</button>
+        <span class="pill" id="scoreC">尚未作答</span>
+      </div>
+      <div class="result" id="outC"></div>
+    </section>
+
+    <footer>
+      製作：ML Ch1 練習 · 單檔網頁（無框架、零依賴）。可自由複製、修改與散佈。
+    </footer>
+  </div>
+
+<script>
+// ===== 工具函式 =====
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+// 儲存 & 載入作答（localStorage）
+const storeKey = 'mlch1-answers-v1';
+function saveState() {
+  const data = {};
+  // Part A/B 單選
+  $$('input[type=radio]:checked').forEach(r => data[r.name] = r.value);
+  // Part C 文本 O/X
+  $$('#partC input[type=text]').forEach(t => data[t.name] = t.value.trim());
+  localStorage.setItem(storeKey, JSON.stringify(data));
+}
+function loadState() {
+  try{
+    const data = JSON.parse(localStorage.getItem(storeKey)||'{}');
+    Object.entries(data).forEach(([name,val])=>{
+      const r = document.querySelector(`input[type=radio][name="${name}"][value="${val}"]`);
+      if (r) r.checked = true;
+      const t = document.querySelector(`input[type=text][name="${name}"]`);
+      if (t) t.value = val;
+    });
+  }catch(e){/* ignore */}
+}
+function resetState(){ localStorage.removeItem(storeKey); location.reload(); }
+
+// 下載此頁
+$('#btnSave').addEventListener('click',()=>{
+  const blob = new Blob([document.documentElement.outerHTML], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ML_Ch1_Interactive.html';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+});
+$('#btnReset').addEventListener('click', resetState);
+
+// ===== 批改邏輯 =====
+const keyA = { 'A.Q1':'A','A.Q2':'B','A.Q3':'A','A.Q4':'B','A.Q5':'B' };
+const expA = {
+  'A.Q1':'分類：結果為離散類別（垃圾/正常）。',
+  'A.Q2':'回歸：輸出為連續數值（價格）。',
+  'A.Q3':'分類：在已知人名集合內多選一。',
+  'A.Q4':'回歸：方向角是連續值。',
+  'A.Q5':'回歸：溫度是連續值。'
+};
+
+const keyB = { 'B.Q1':'B','B.Q2':'C','B.Q3':'D','B.Q4':'A','B.Q5':'C' };
+const expB = {
+  'B.Q1':'驗證：兩張臉是否同一人。',
+  'B.Q2':'檢測：在影像中定位人臉位置（bounding boxes）。',
+  'B.Q3':'搜尋：在資料庫找最相似的前幾名。',
+  'B.Q4':'分類：從已知人員集合多選一。',
+  'B.Q5':'有無 + 框出 -> 本質為檢測。'
+};
+
+const keyC = { 'C.Q1':true,'C.Q2':true,'C.Q3':true,'C.Q4':false,'C.Q5':false,'C.Q6':true,'C.Q7':false,'C.Q8':true };
+const expC = {
+  'C.Q1':'O：非監督沒有標籤。',
+  'C.Q2':'O：回歸需要標記數值作為監督訊號。',
+  'C.Q3':'O：分群是非監督代表任務。',
+  'C.Q4':'X：分類輸出為離散類別。',
+  'C.Q5':'X：決策邊界主要用於分類。',
+  'C.Q6':'O：PCA/UMAP/t-SNE 常用於探索與視覺化。',
+  'C.Q7':'X：模板匹配屬傳統 PR，非 ML。',
+  'C.Q8':'O：SVM/k-NN 處於 PR 與 ML 的交集。'
+};
+
+function gradeA(){
+  const out = $('#outA'); out.textContent = '';
+  let correct=0; let total=Object.keys(keyA).length; let lines=[];
+  Object.entries(keyA).forEach(([q,ans])=>{
+    const chosen = $(`input[type=radio][name="${q}"]:checked`);
+    if(!chosen){ lines.push(`${q}: ⚠️ 未作答`); return; }
+    const ok = chosen.value===ans; if(ok) correct++; 
+    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+chosen.value+'；正解: '+ans+'）'}`);
+    lines.push(`解析：${expA[q]}`);
+  });
+  $('#scoreA').textContent = `總分：${correct} / ${total}`;
+  out.textContent = lines.join('\n');
+}
+
+function gradeB(){
+  const out = $('#outB'); out.textContent = '';
+  let correct=0; let total=Object.keys(keyB).length; let lines=[];
+  Object.entries(keyB).forEach(([q,ans])=>{
+    const chosen = $(`input[type=radio][name="${q}"]:checked`);
+    if(!chosen){ lines.push(`${q}: ⚠️ 未作答`); return; }
+    const ok = chosen.value===ans; if(ok) correct++;
+    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+chosen.value+'；正解: '+ans+'）'}`);
+    lines.push(`解析：${expB[q]}`);
+  });
+  $('#scoreB').textContent = `總分：${correct} / ${total}`;
+  out.textContent = lines.join('\n');
+}
+
+function normalizeTF(v){
+  if(!v) return null; const s = String(v).trim().toLowerCase();
+  if(['o','t','true','1','y','yes','是'].includes(s)) return true;
+  if(['x','f','false','0','n','no','否'].includes(s)) return false;
+  return null;
+}
+
+function gradeC(){
+  const out = $('#outC'); out.textContent = '';
+  let correct=0; let total=Object.keys(keyC).length; let lines=[];
+  Object.entries(keyC).forEach(([q,ans])=>{
+    const t = $(`input[name="${q}"]`);
+    const val = normalizeTF(t.value);
+    if(val===null){ lines.push(`${q}: ⚠️ 未作答或格式無效（請輸入 O/X 或 True/False）`); return; }
+    const ok = (val===ans); if(ok) correct++;
+    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（正解: '+(ans?'O':'X')+'）'}`);
+    lines.push(`解析：${expC[q]}`);
+  });
+  $('#scoreC').textContent = `總分：${correct} / ${total}`;
+  out.textContent = lines.join('\n');
+}
+
+$$('button[data-grade]').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    const p = e.currentTarget.getAttribute('data-grade');
+    if(p==='A') gradeA();
+    if(p==='B') gradeB();
+    if(p==='C') gradeC();
+    saveState();
+  });
+});
+
+// 自動儲存互動
+addEventListener('change', saveState);
+addEventListener('input', saveState);
+loadState();
+</script>
+</body>
+</html>
