@@ -37,9 +37,8 @@
   </header>
 
   <section class="card">
-    <div class="status">
-      <span class="badge" id="chk-canvas">Canvas 渲染：待檢測</span>
-    </div>
+    <div class="status">$1</div>
+    <div class="row"><button class="btn" id="btnRefresh">重新渲染 / 重新檢測</button></div>
     <p class="pill">本卷含兩組：Regression（3 題單選）＋布林函數（2 題填空）。</p>
   </section>
 
@@ -185,21 +184,40 @@ function drawThreeFits(canvas){
   ctx.fillStyle='#9fb3c8'; ctx.fillText('白:直線  青:二次  橙:高次（易過擬合）', pad+6, pad+14);
 }
 
-// === Boolean 圖示 ===
-function drawTruthTableSketch(canvas,markFixed=false){
-  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight;
-  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
-  const left=40, top=40, rowH=36, colW=[80,80,120];
-  ctx.fillStyle='#9fb3c8'; ctx.fillText('x₁', left+10, top-10); ctx.fillText('x₂', left+colW[0]+10, top-10); ctx.fillText('輸出', left+colW[0]+colW[1]+10, top-10);
-  const rows=[[0,0],[0,1],[1,0],[1,1]];
-  rows.forEach((r,i)=>{
-    const y=top+i*rowH;
-    ctx.strokeStyle='#223044'; ctx.strokeRect(left, y-24, colW[0], rowH);
-    ctx.strokeRect(left+colW[0], y-24, colW[1], rowH);
-    ctx.strokeRect(left+colW[0]+colW[1], y-24, colW[2], rowH);
-    ctx.fillStyle='#e8eef7'; ctx.fillText(String(r[0]), left+colW[0]-26, y); ctx.fillText(String(r[1]), left+colW[0]+colW[1]-26, y);
-    if(markFixed && i===0){ ctx.fillStyle='#71b7ff'; ctx.fillText('1（已知）', left+colW[0]+colW[1]+20, y); }
-  });
+// === Boolean 圖示 ===$1// === Render 狀態徽章與輪詢檢測 ===
+function setCanvasBadge(state,msg){
+  const badge=document.querySelector('#chk-canvas'); if(!badge) return;
+  badge.classList.remove('ok','err'); badge.classList.add('badge');
+  if(state==='pending'){ badge.textContent='⏳ 檢測中…'; }
+  else if(state==='ok'){ badge.classList.add('ok'); badge.textContent='✅ '+(msg||'Canvas 渲染 OK'); }
+  else { badge.classList.add('err'); badge.textContent='❌ '+(msg||'Canvas 未成功渲染'); }
+}
+function checkCanvasNow(){
+  try{
+    const canv=Array.from(document.querySelectorAll('canvas')); if(canv.length===0) return false;
+    return canv.every(c=>{ const ctx=c.getContext('2d'); const data=ctx.getImageData(0,0,c.width,c.height).data; let nonZero=0; for(let i=0;i<100;i++){ const k=(Math.floor(Math.random()*data.length/4)*4); if(data[k]+data[k+1]+data[k+2]!==0) nonZero++; } return nonZero>5; });
+  }catch(e){ return false; }
+}
+async function checkCanvasPoll(retries=6, interval=350){
+  for(let i=0;i<=retries; i++){
+    if(checkCanvasNow()){ setCanvasBadge('ok'); return true; }
+    await new Promise(r=>setTimeout(r, interval));
+  }
+  setCanvasBadge('err','超時：未成功渲染');
+  return false;
+}
+
+// 將繪圖初始化封裝，供刷新重跑
+function renderAll(){
+  // R 區塊
+  const Qr=Array.from(document.querySelectorAll('#partR .q'));
+  if(Qr[0]) drawRegressionWithResiduals(Qr[0].querySelector('canvas'));
+  if(Qr[1]) drawModelForms(Qr[1].querySelector('canvas'));
+  if(Qr[2]) drawThreeFits(Qr[2].querySelector('canvas'));
+  // B 區塊
+  const Qb=Array.from(document.querySelectorAll('#partB .q'));
+  if(Qb[0]) drawTruthTableSketch(Qb[0].querySelector('canvas'), false);
+  if(Qb[1]) drawTruthTableSketch(Qb[1].querySelector('canvas'), true);
 }
 
 // === 初始化 & 批改 ===
@@ -259,14 +277,11 @@ $$('button[data-grade]').forEach(btn=>btn.addEventListener('click',e=>{
 }));
 
 // 繪圖
-(function init(){
-  const Qr=$$('#partR .q'); drawRegressionWithResiduals(Qr[0].querySelector('canvas')); drawModelForms(Qr[1].querySelector('canvas')); drawThreeFits(Qr[2].querySelector('canvas'));
-  const Qb=$$('#partB .q'); drawTruthTableSketch(Qb[0].querySelector('canvas'), false); drawTruthTableSketch(Qb[1].querySelector('canvas'), true);
-  setTimeout(()=>{ // 檢查 Canvas
-    const canv=$$('canvas'); const ok = canv.length>0 && canv.every(c=>{ try{const ctx=c.getContext('2d'); const data=ctx.getImageData(0,0,c.width,c.height).data; let nz=0; for(let i=0;i<100;i++){ const k=(Math.floor(Math.random()*data.length/4)*4); if(data[k]+data[k+1]+data[k+2]!==0) nz++; } return nz>5; }catch(e){ return false; }});
-    const badge=$('#chk-canvas'); badge.classList.add('badge', ok?'ok':'err'); badge.textContent=(ok?'✅ ':'❌ ')+(ok?'Canvas 渲染 OK':'Canvas 未成功渲染');
-  }, 400);
-})();
+(function(){ setCanvasBadge('pending'); renderAll(); checkCanvasPoll(); })();
+
+// 刷新按鈕：重新渲染並重跑檢測
+const btnRef=document.querySelector('#btnRefresh');
+if(btnRef){ btnRef.addEventListener('click', ()=>{ setCanvasBadge('pending'); renderAll(); checkCanvasPoll(); }); }
 
 // 下載本頁
 const btnSaveEl=$('#btnSave'); if(btnSaveEl){ btnSaveEl.addEventListener('click',()=>{ const blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz_reg_bool_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); }); } const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz_reg_bool_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); });
