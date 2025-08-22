@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>試卷：Regression（MSE/線性判斷）＋布林函數計數</title>
+  <title>試卷：Regression（MSE/線性判斷）＋布林函數計數｜自檢</title>
   <style>
     :root{--bg:#0b0f14;--card:#121922;--ink:#e8eef7;--muted:#9fb3c8;--brand:#71b7ff;--ok:#44d07b;--bad:#ff6b6b}
     *{box-sizing:border-box}
@@ -26,19 +26,20 @@
     .badge{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid #263246;background:#162232;color:#9fb3c8}
     .badge.ok{background:#153b2c;border-color:#2b8a57;color:#aef1c2}
     .badge.err{background:#3b1b1b;border-color:#b54646;color:#ffc9c9}
-    .txt{width:100%;padding:10px;border-radius:10px;border:1px solid #2a3547;background:#0e141d;color:var(--ink)}
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>試卷 — Regression（MSE/線性判斷）＋布林函數</h1>
-    
+    <h1>試卷 — Regression（MSE/線性判斷）＋布林函數｜自檢</h1>
+    <!-- 依你的要求：不放下載鈕與時間戳 -->
+    <div></div>
   </header>
 
   <section class="card">
-    <div class="status">$1</div>
-    <div class="row"><button class="btn" id="btnRefresh">重新渲染 / 重新檢測</button></div>
+    <div class="status">
+      <span class="badge" id="chk-canvas">Canvas 渲染：待檢測</span>
+    </div>
     <p class="pill">本卷含兩組：Regression（3 題單選）＋布林函數（2 題填空）。</p>
   </section>
 
@@ -46,7 +47,6 @@
   <section class="card" id="partR">
     <h2>Part R — Regression（單選）</h2>
 
-    <!-- R.Q1: MSE -->
     <div class="q" data-id="R.Q1">
       <canvas></canvas>
       <div>
@@ -57,11 +57,10 @@
           <label><input type="radio" name="R.Q1" value="C">C. Huber Loss</label>
           <label><input type="radio" name="R.Q1" value="D">D. Cross-Entropy</label>
         </div>
-        <p class="pill">公式：E(g|X)= (1/N) Σ [rᵗ − g(xᵗ)]²（平方放大大誤差）</p>
+        <p class="pill">公式：E(g|X)=(1/N) Σ [rᵗ − g(xᵗ)]²（平方放大大誤差）</p>
       </div>
     </div>
 
-    <!-- R.Q2: linear model form -->
     <div class="q" data-id="R.Q2">
       <canvas></canvas>
       <div>
@@ -76,11 +75,10 @@
       </div>
     </div>
 
-    <!-- R.Q3: three curves judgement -->
     <div class="q" data-id="R.Q3">
       <canvas></canvas>
       <div>
-        <strong>R3. 觀察同一批資料：直線、一條二次曲線、與高度起伏的高次曲線。哪個敘述最合理？</strong>
+        <strong>R3. 同一批資料：直線、二次曲線、與高度起伏的高次曲線。哪個敘述最合理？</strong>
         <div class="opts">
           <label><input type="radio" name="R.Q3" value="A">A. 直線無法準確擬合所有資料</label>
           <label><input type="radio" name="R.Q3" value="B">B. 二次曲線通常比直線更貼近趨勢</label>
@@ -98,22 +96,20 @@
   <section class="card" id="partB">
     <h2>Part B — 布林函數計數（填空）</h2>
 
-    <!-- B.Q1: 2 inputs -> 16 functions -->
     <div class="q" data-id="B.Q1" style="grid-template-columns:1fr 1fr;">
       <canvas></canvas>
       <div>
         <strong>B1. 輸入 (x₁,x₂) 僅 4 種輸入情境。共有幾個不同的布林函數？（填數字）</strong>
-        <input class="txt" type="text" name="B.Q1" placeholder="輸入答案，例如：5">
+        <input class="txt" type="text" name="B.Q1" placeholder="輸入答案，例如：16" style="width:100%;padding:10px;border-radius:10px;border:1px solid #2a3547;background:#0e141d;color:#e8eef7">
         <p class="pill">理由：每情境輸出可 0/1 → 函數個數 = 2^(情境數)</p>
       </div>
     </div>
 
-    <!-- B.Q2: one case fixed -> 8 -->
     <div class="q" data-id="B.Q2" style="grid-template-columns:1fr 1fr;">
       <canvas></canvas>
       <div>
         <strong>B2. 只知 (x₁,x₂)=(0,0) 的輸出為 1，其他三情境未知。可能的布林函數有幾個？（填數字）</strong>
-        <input class="txt" type="text" name="B.Q2" placeholder="輸入答案，例如：5">
+        <input class="txt" type="text" name="B.Q2" placeholder="輸入答案，例如：8" style="width:100%;padding:10px;border-radius:10px;border:1px solid #2a3547;background:#0e141d;color:#e8eef7">
         <p class="pill">理由：其餘 3 格可 0/1 任選 → 2³=8</p>
       </div>
     </div>
@@ -126,10 +122,10 @@
 </div>
 
 <script>
-const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-const buildInfoEl=$('#buildInfo'); if(buildInfoEl){ buildInfoEl.textContent=new Date().toLocaleString('zh-TW')+' 生成（Canvas 可離線）'; }
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 
-// === 工具 ===
+// ========= 繪圖工具（與「試卷2」相同節奏） =========
 function drawAxes(ctx,W,H,pad,xlabel,ylabel,minX,maxX,minY,maxY){
   ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='#223044'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
@@ -144,7 +140,7 @@ function drawAxes(ctx,W,H,pad,xlabel,ylabel,minX,maxX,minY,maxY){
 function scaler(min,max,pxMin,pxMax,flip=false){ return v=>{ const t=(v-min)/((max-min)||1); const px=pxMin+t*(pxMax-pxMin); return flip? (pxMax - (px-pxMin)) : px; }; }
 function randn(mu=0,sigma=1){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return mu+sigma*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
 
-// === Regression 畫圖 ===
+// ========= Regression 繪圖 =========
 function drawRegressionWithResiduals(canvas){
   const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
   const xs=[...Array(40)].map((_,i)=>i/9); const pts=xs.map(x=>[x, 2.0*x+1.0 + randn(0,0.35)]);
@@ -175,116 +171,85 @@ function drawThreeFits(canvas){
   const x2px=scaler(minX,maxX,pad,W-pad,false), y2px=scaler(minY,maxY,pad,H-pad,true);
   drawAxes(ctx,W,H,pad,'x','y',minX,maxX,minY,maxY);
   ctx.fillStyle='#71b7ff'; pts.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),3.5,0,Math.PI*2); ctx.fill();});
-  // 直線
   const L=(x)=>0.7*x+1.2; ctx.strokeStyle='#e8eef7'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x2px(minX),y2px(L(minX))); ctx.lineTo(x2px(maxX),y2px(L(maxX))); ctx.stroke();
-  // 二次
   const Q=(x)=>0.4*x*x+0.6*x+1.0; ctx.strokeStyle='#66e6d4'; ctx.lineWidth=2; ctx.beginPath(); for(let x=minX;x<=maxX;x+=0.02){ const y=Q(x); const px=x2px(x), py=y2px(y); if(x===minX) ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.stroke();
-  // 高次（過擬合感）
   const Hh=(x)=>Q(x)+0.2*Math.sin(10*x); ctx.strokeStyle='#ffb86b'; ctx.lineWidth=1.5; ctx.beginPath(); for(let x=minX;x<=maxX;x+=0.01){ const y=Hh(x); const px=x2px(x), py=y2px(y); if(x===minX) ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.stroke();
   ctx.fillStyle='#9fb3c8'; ctx.fillText('白:直線  青:二次  橙:高次（易過擬合）', pad+6, pad+14);
 }
 
-// === Boolean 圖示 ===$1// === Render 狀態徽章與輪詢檢測 ===
-function setCanvasBadge(state,msg){
-  const badge=document.querySelector('#chk-canvas'); if(!badge) return;
-  badge.classList.remove('ok','err'); badge.classList.add('badge');
-  if(state==='pending'){ badge.textContent='⏳ 檢測中…'; }
-  else if(state==='ok'){ badge.classList.add('ok'); badge.textContent='✅ '+(msg||'Canvas 渲染 OK'); }
-  else { badge.classList.add('err'); badge.textContent='❌ '+(msg||'Canvas 未成功渲染'); }
+// ========= Boolean 圖示 =========
+function drawTruthTableSketch(canvas,markFixed=false){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight;
+  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
+  const left=40, top=40, rowH=36, colW=[80,80,120];
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('x₁', left+10, top-10); ctx.fillText('x₂', left+colW[0]+10, top-10); ctx.fillText('輸出', left+colW[0]+colW[1]+10, top-10);
+  const rows=[[0,0],[0,1],[1,0],[1,1]];
+  rows.forEach((r,i)=>{
+    const y=top+i*rowH;
+    ctx.strokeStyle='#223044'; ctx.strokeRect(left, y-24, colW[0], rowH);
+    ctx.strokeRect(left+colW[0], y-24, colW[1], rowH);
+    ctx.strokeRect(left+colW[0]+colW[1], y-24, colW[2], rowH);
+    ctx.fillStyle='#e8eef7'; ctx.fillText(String(r[0]), left+colW[0]-26, y); ctx.fillText(String(r[1]), left+colW[0]+colW[1]-26, y);
+    if(markFixed && i===0){ ctx.fillStyle='#71b7ff'; ctx.fillText('1（已知）', left+colW[0]+colW[1]+20, y); }
+  });
 }
-function checkCanvasNow(){
+
+// ========= 渲染檢測（與「試卷2」一致） =========
+function mark(id, ok, msgOK='OK', msgErr='Error'){
+  const el=$( '#' + id ); if(!el) return;
+  el.classList.remove('ok','err'); el.textContent = (ok? '✅ ': '❌ ') + (ok? msgOK: msgErr);
+  el.classList.add(ok? 'ok':'err','badge');
+}
+function checkCanvasOne(canvas){
   try{
-    const canv=Array.from(document.querySelectorAll('canvas')); if(canv.length===0) return false;
-    return canv.every(c=>{ const ctx=c.getContext('2d'); const data=ctx.getImageData(0,0,c.width,c.height).data; let nonZero=0; for(let i=0;i<100;i++){ const k=(Math.floor(Math.random()*data.length/4)*4); if(data[k]+data[k+1]+data[k+2]!==0) nonZero++; } return nonZero>5; });
+    const ctx=canvas.getContext('2d'); const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    let nonZero=0; for(let i=0;i<100;i++){ const k=(Math.floor(Math.random()*data.length/4)*4); if(data[k]+data[k+1]+data[k+2]!==0) nonZero++; }
+    return nonZero>5;
   }catch(e){ return false; }
 }
-async function checkCanvasPoll(retries=6, interval=350){
-  for(let i=0;i<=retries; i++){
-    if(checkCanvasNow()){ setCanvasBadge('ok'); return true; }
-    await new Promise(r=>setTimeout(r, interval));
-  }
-  setCanvasBadge('err','超時：未成功渲染');
-  return false;
+function checkCanvasAll(){
+  const canv=$$('canvas');
+  const ok = canv.length>0 && canv.every(c=>checkCanvasOne(c));
+  mark('chk-canvas', ok, 'Canvas 渲染 OK', 'Canvas 未成功渲染');
 }
 
-// 將繪圖初始化封裝，供刷新重跑
-function renderAll(){
-  // R 區塊
-  const Qr=Array.from(document.querySelectorAll('#partR .q'));
-  if(Qr[0]) drawRegressionWithResiduals(Qr[0].querySelector('canvas'));
-  if(Qr[1]) drawModelForms(Qr[1].querySelector('canvas'));
-  if(Qr[2]) drawThreeFits(Qr[2].querySelector('canvas'));
-  // B 區塊
-  const Qb=Array.from(document.querySelectorAll('#partB .q'));
-  if(Qb[0]) drawTruthTableSketch(Qb[0].querySelector('canvas'), false);
-  if(Qb[1]) drawTruthTableSketch(Qb[1].querySelector('canvas'), true);
-}
+// ========= 初始化（先畫 → 400ms 後檢測，與試卷2相同） =========
+(function init(){
+  // R
+  const Qr=$$('#partR .q');
+  drawRegressionWithResiduals(Qr[0].querySelector('canvas'));
+  drawModelForms(Qr[1].querySelector('canvas'));
+  drawThreeFits(Qr[2].querySelector('canvas'));
+  // B
+  const Qb=$$('#partB .q');
+  drawTruthTableSketch(Qb[0].querySelector('canvas'), false);
+  drawTruthTableSketch(Qb[1].querySelector('canvas'), true);
+  // 等繪製完成後再檢測
+  setTimeout(checkCanvasAll, 400);
+})();
 
-// === 初始化 & 批改 ===
-const storeKey='ml-quiz-reg-bool-v1';
-function saveState(){ const data={}; $$('input[type=radio]:checked').forEach(r=>data[r.name]=r.value); $$('input.txt').forEach(t=>data[t.name]=t.value); localStorage.setItem(storeKey, JSON.stringify(data)); }
-function loadState(){ try{ const data=JSON.parse(localStorage.getItem(storeKey)||'{}'); Object.entries(data).forEach(([k,v])=>{ const r=document.querySelector(`input[name="${k}"][value="${v}"]`); if(r) r.checked=true; const t=document.querySelector(`input[name="${k}"]`); if(t) t.value=v;}); }catch(e){} }
+// ========= 批改 & 儲存 =========
+const keyR={'R.Q1':'A','R.Q2':'A','R.Q3':'D'};
+const expR={
+  'R.Q1':'MSE：E(g|X)=(1/N)∑[r^t−g(x^t)]²；平方懲罰大誤差。',
+  'R.Q2':'線性回歸指對參數線性的一次模型：g(x)=w₁x+w₀。',
+  'R.Q3':'複雜度↑先降訓練誤差，但過高會過擬合；二次常比一次貼趨勢。'
+};
+const storeKey='ml-quiz-reg-bool-v2';
+function saveState(){ const data={}; $$('input[type=radio]:checked').forEach(r=>data[r.name]=r.value); $$('input[type=text]').forEach(t=>data[t.name]=t.value); localStorage.setItem(storeKey, JSON.stringify(data)); }
+function loadState(){ try{ const data=JSON.parse(localStorage.getItem(storeKey)||'{}'); Object.entries(data).forEach(([k,v])=>{ const r=document.querySelector(`input[name=\"${k}\"][value=\"${v}\"]`); if(r) r.checked=true; const t=document.querySelector(`input[name=\"${k}\"]`); if(t) t.value=v;}); }catch(e){} }
 function resetState(){ localStorage.removeItem(storeKey); location.reload(); }
-$('#btnReset').addEventListener('click', resetState); addEventListener('change', saveState); addEventListener('input', saveState); loadState();
+$('#btnReset')?.addEventListener('click', resetState); addEventListener('change', saveState); addEventListener('input', saveState); loadState();
 
-function gradeR(){
-  const key={'R.Q1':'A','R.Q2':'A','R.Q3':'D'};
-  const exp={
-    'R.Q1':'MSE：E(g|X)=(1/N)∑[r^t−g(x^t)]²；平方懲罰大誤差。',
-    'R.Q2':'線性回歸指對參數線性的一次模型：g(x)=w₁x+w₀。',
-    'R.Q3':'複雜度↑先降訓練誤差，但過高會過擬合；二次常比一次貼趨勢。'
-  };
-  let correct=0,total=Object.keys(key).length, lines=[];
-  Object.entries(key).forEach(([q,ans])=>{
-    const chosen=document.querySelector(`input[name="${q}"]:checked`);
-    if(!chosen){ lines.push(`${q}: ⚠️ 未作答`); return; }
-    const ok=chosen.value===ans; if(ok) correct++;
-    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+chosen.value+'；正解: '+ans+'）'}`);
-    lines.push('解析：'+exp[q]);
-  });
-  $('#scoreR').textContent=`總分：${correct} / ${total}`;
-  $('#outR').textContent=lines.join('\n');
-}
-
-function normalizeNum(s){
-  const t=(s||'').toString().trim().replace(/[，,\s]/g,'');
-  const map={'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9'};
-  let u=''; for(const ch of t){ u+= (map[ch] ?? ch); }
-  // 中文小寫常用數字（只用到 8、16）
-  if(u==='十六') return '16';
-  if(u==='八') return '8';
-  return u;
-}
-function gradeB(){
-  const ans={'B.Q1':['16'],'B.Q2':['8']};
-  const exp={'B.Q1':'2^4=16（四個輸入情境，各自 0/1）','B.Q2':'2^3=8（其餘三格自由 0/1）'};
-  let correct=0,total=2, lines=[];
-  Object.entries(ans).forEach(([q,arr])=>{
-    const v=normalizeNum(($(`input[name="${q}"]`)||{}).value);
-    if(!v){ lines.push(`${q}: ⚠️ 未作答`); return; }
-    const ok=arr.includes(v); if(ok) correct++;
-    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+v+'；正解: '+arr[0]+'）'}`);
-    lines.push('解析：'+exp[q]);
-  });
-  $('#scoreB').textContent=`總分：${correct} / ${total}`;
-  $('#outB').textContent=lines.join('\n');
-}
+function gradeR(){ const out=$('#outR'), score=$('#scoreR'); let correct=0,total=Object.keys(keyR).length, lines=[]; Object.entries(keyR).forEach(([q,ans])=>{ const chosen=document.querySelector(`input[name=\"${q}\"]:checked`); if(!chosen){ lines.push(`${q}: ⚠️ 未作答`); return; } const ok=chosen.value===ans; if(ok) correct++; lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+chosen.value+'；正解: '+ans+'）'}`); lines.push('解析：'+expR[q]);}); score.textContent=`總分：${correct} / ${total}`; out.textContent=lines.join('\n'); }
+function normalizeNum(s){ const t=(s||'').toString().trim().replace(/[，,\\s]/g,''); const map={'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9'}; let u=''; for(const ch of t){ u+= (map[ch] ?? ch); } if(u==='十六') return '16'; if(u==='八') return '8'; return u; }
+function gradeB(){ const ans={'B.Q1':['16'],'B.Q2':['8']}; const exp={'B.Q1':'2^4=16（四個輸入情境，各自 0/1）','B.Q2':'2^3=8（其餘三格自由 0/1）'}; let correct=0,total=2, lines=[]; Object.entries(ans).forEach(([q,arr])=>{ const v=normalizeNum(($(`input[name=\"${q}\"]`)||{}).value); if(!v){ lines.push(`${q}: ⚠️ 未作答`); return; } const ok=arr.includes(v); if(ok) correct++; lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+v+'；正解: '+arr[0]+'）'}`); lines.push('解析：'+exp[q]);}); $('#scoreB').textContent=`總分：${correct} / ${total}`; $('#outB').textContent=lines.join('\n'); }
 
 $$('button[data-grade]').forEach(btn=>btn.addEventListener('click',e=>{
   const p=e.currentTarget.getAttribute('data-grade');
   if(p==='R') gradeR(); else if(p==='B') gradeB();
   saveState();
 }));
-
-// 繪圖
-(function(){ setCanvasBadge('pending'); renderAll(); checkCanvasPoll(); })();
-
-// 刷新按鈕：重新渲染並重跑檢測
-const btnRef=document.querySelector('#btnRefresh');
-if(btnRef){ btnRef.addEventListener('click', ()=>{ setCanvasBadge('pending'); renderAll(); checkCanvasPoll(); }); }
-
-// 下載本頁
-const btnSaveEl=$('#btnSave'); if(btnSaveEl){ btnSaveEl.addEventListener('click',()=>{ const blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz_reg_bool_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); }); } const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz_reg_bool_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); });
 </script>
 </body>
 </html>
