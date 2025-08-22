@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>試卷：Regression（MSE/線性判斷）＋布林函數計數</title>
+  <style>
+    :root{--bg:#0b0f14;--card:#121922;--ink:#e8eef7;--muted:#9fb3c8;--brand:#71b7ff;--ok:#44d07b;--bad:#ff6b6b}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+    .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+    header{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    h1{margin:0;font-size:clamp(20px,3vw,26px)}
+    .btn{appearance:none;border:none;border-radius:10px;padding:8px 12px;background:#1f2a3a;color:var(--ink);cursor:pointer}
+    .btn.primary{background:var(--brand);color:#041424;font-weight:700}
+    .card{background:var(--card);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+    h2{margin:0 0 8px 0;font-size:20px}
+    .q{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin:14px 0;padding:12px;border:1px solid #223044;border-radius:12px}
+    canvas{width:100%;height:320px;background:#0e141d;border-radius:10px;border:1px solid #223044}
+    .opts{display:grid;gap:8px}
+    .opts label{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border:1px solid #2a3547;border-radius:10px;cursor:pointer}
+    .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12px;background:#162232;color:var(--muted);border:1px solid #263246}
+    .result{white-space:pre-wrap;background:#0e141d;border:1px solid #223044;border-radius:12px;padding:12px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .status{display:flex;gap:8px;flex-wrap:wrap}
+    .badge{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid #263246;background:#162232;color:#9fb3c8}
+    .badge.ok{background:#153b2c;border-color:#2b8a57;color:#aef1c2}
+    .badge.err{background:#3b1b1b;border-color:#b54646;color:#ffc9c9}
+    .txt{width:100%;padding:10px;border-radius:10px;border:1px solid #2a3547;background:#0e141d;color:var(--ink)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>試卷 — Regression（MSE/線性判斷）＋布林函數</h1>
+    
+  </header>
+
+  <section class="card">
+    <div class="status">
+      <span class="badge" id="chk-canvas">Canvas 渲染：待檢測</span>
+    </div>
+    <p class="pill">本卷含兩組：Regression（3 題單選）＋布林函數（2 題填空）。</p>
+  </section>
+
+  <!-- Part R: Regression -->
+  <section class="card" id="partR">
+    <h2>Part R — Regression（單選）</h2>
+
+    <!-- R.Q1: MSE -->
+    <div class="q" data-id="R.Q1">
+      <canvas></canvas>
+      <div>
+        <strong>R1. 本章回歸使用的損失函數是？</strong>
+        <div class="opts">
+          <label><input type="radio" name="R.Q1" value="A">A. Mean Squared Error（MSE）</label>
+          <label><input type="radio" name="R.Q1" value="B">B. Mean Absolute Error（MAE）</label>
+          <label><input type="radio" name="R.Q1" value="C">C. Huber Loss</label>
+          <label><input type="radio" name="R.Q1" value="D">D. Cross-Entropy</label>
+        </div>
+        <p class="pill">公式：E(g|X)= (1/N) Σ [rᵗ − g(xᵗ)]²（平方放大大誤差）</p>
+      </div>
+    </div>
+
+    <!-- R.Q2: linear model form -->
+    <div class="q" data-id="R.Q2">
+      <canvas></canvas>
+      <div>
+        <strong>R2. 下列何者為「線性回歸模型」？</strong>
+        <div class="opts">
+          <label><input type="radio" name="R.Q2" value="A">A. g(x)=w₁x+w₀</label>
+          <label><input type="radio" name="R.Q2" value="B">B. g(x)=w₂x²+w₁x+w₀</label>
+          <label><input type="radio" name="R.Q2" value="C">C. g(x)=sin(x)</label>
+          <label><input type="radio" name="R.Q2" value="D">D. g(x)=log(x)</label>
+        </div>
+        <p class="pill">線性回歸＝對參數線性的一次模型；B–D 為非線性形狀</p>
+      </div>
+    </div>
+
+    <!-- R.Q3: three curves judgement -->
+    <div class="q" data-id="R.Q3">
+      <canvas></canvas>
+      <div>
+        <strong>R3. 觀察同一批資料：直線、一條二次曲線、與高度起伏的高次曲線。哪個敘述最合理？</strong>
+        <div class="opts">
+          <label><input type="radio" name="R.Q3" value="A">A. 直線無法準確擬合所有資料</label>
+          <label><input type="radio" name="R.Q3" value="B">B. 二次曲線通常比直線更貼近趨勢</label>
+          <label><input type="radio" name="R.Q3" value="C">C. 過度複雜的模型雖貼資料但可能過擬合</label>
+          <label><input type="radio" name="R.Q3" value="D">D. 以上皆是</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row"><button class="btn primary" data-grade="R">批改 Part R</button><span class="pill" id="scoreR">尚未作答</span></div>
+    <div class="result" id="outR"></div>
+  </section>
+
+  <!-- Part B: Boolean functions -->
+  <section class="card" id="partB">
+    <h2>Part B — 布林函數計數（填空）</h2>
+
+    <!-- B.Q1: 2 inputs -> 16 functions -->
+    <div class="q" data-id="B.Q1" style="grid-template-columns:1fr 1fr;">
+      <canvas></canvas>
+      <div>
+        <strong>B1. 輸入 (x₁,x₂) 僅 4 種輸入情境。共有幾個不同的布林函數？（填數字）</strong>
+        <input class="txt" type="text" name="B.Q1" placeholder="輸入答案，例如：5">
+        <p class="pill">理由：每情境輸出可 0/1 → 函數個數 = 2^(情境數)</p>
+      </div>
+    </div>
+
+    <!-- B.Q2: one case fixed -> 8 -->
+    <div class="q" data-id="B.Q2" style="grid-template-columns:1fr 1fr;">
+      <canvas></canvas>
+      <div>
+        <strong>B2. 只知 (x₁,x₂)=(0,0) 的輸出為 1，其他三情境未知。可能的布林函數有幾個？（填數字）</strong>
+        <input class="txt" type="text" name="B.Q2" placeholder="輸入答案，例如：5">
+        <p class="pill">理由：其餘 3 格可 0/1 任選 → 2³=8</p>
+      </div>
+    </div>
+
+    <div class="row"><button class="btn primary" data-grade="B">批改 Part B</button><span class="pill" id="scoreB">尚未作答</span></div>
+    <div class="result" id="outB"></div>
+  </section>
+
+  <section class="card"><div class="row"><button class="btn" id="btnReset">全部清空作答</button></div></section>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const buildInfoEl=$('#buildInfo'); if(buildInfoEl){ buildInfoEl.textContent=new Date().toLocaleString('zh-TW')+' 生成（Canvas 可離線）'; }
+
+// === 工具 ===
+function drawAxes(ctx,W,H,pad,xlabel,ylabel,minX,maxX,minY,maxY){
+  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#223044'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  for(let i=0;i<=4;i++){const tx=pad+i*(W-2*pad)/4; ctx.beginPath(); ctx.moveTo(tx,pad); ctx.lineTo(tx,H-pad); ctx.stroke();}
+  for(let i=0;i<=4;i++){const ty=pad+i*(H-2*pad)/4; ctx.beginPath(); ctx.moveTo(pad,ty); ctx.lineTo(W-pad,ty); ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.strokeStyle='#41536b'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText(xlabel,W/2-20,H-8); ctx.save(); ctx.translate(12,H/2); ctx.rotate(-Math.PI/2); ctx.fillText(ylabel,0,0); ctx.restore();
+}
+function scaler(min,max,pxMin,pxMax,flip=false){ return v=>{ const t=(v-min)/((max-min)||1); const px=pxMin+t*(pxMax-pxMin); return flip? (pxMax - (px-pxMin)) : px; }; }
+function randn(mu=0,sigma=1){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return mu+sigma*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+
+// === Regression 畫圖 ===
+function drawRegressionWithResiduals(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  const xs=[...Array(40)].map((_,i)=>i/9); const pts=xs.map(x=>[x, 2.0*x+1.0 + randn(0,0.35)]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs); const ys=pts.map(p=>p[1]); const minY=Math.min(...ys), maxY=Math.max(...ys);
+  const x2px=scaler(minX,maxX,pad,W-pad,false); const y2px=scaler(minY,maxY,pad,H-pad,true);
+  drawAxes(ctx,W,H,pad,'x','y',minX,maxX,minY,maxY);
+  const w=2.0, b=1.0;
+  ctx.fillStyle='#71b7ff'; pts.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),4,0,Math.PI*2); ctx.fill();});
+  ctx.strokeStyle='#e8eef7'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x2px(minX),y2px(w*minX+b)); ctx.lineTo(x2px(maxX),y2px(w*maxX+b)); ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText(`y = ${w.toFixed(2)}x + ${b.toFixed(2)}`, pad+6, pad+14);
+  ctx.strokeStyle='#9fb3c8'; ctx.setLineDash([6,4]);
+  pts.filter((_,i)=>i%6===0).forEach(([x,y])=>{ const yp=w*x+b; ctx.beginPath(); ctx.moveTo(x2px(x), y2px(y)); ctx.lineTo(x2px(x), y2px(yp)); ctx.stroke(); });
+  ctx.setLineDash([]);
+}
+function drawModelForms(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  drawAxes(ctx,W,H,pad,'x','g(x)',-2,2,-2,3);
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('候選：', pad+6, pad+14);
+  ctx.fillText('A: g(x)=w₁x+w₀（線性）', pad+6, pad+34);
+  ctx.fillText('B: g(x)=w₂x²+w₁x+w₀（非線性形狀）', pad+6, pad+54);
+  ctx.fillText('C: g(x)=sin x', pad+6, pad+74);
+  ctx.fillText('D: g(x)=log x', pad+6, pad+94);
+}
+function drawThreeFits(canvas){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight; const pad=32;
+  const xs=[...Array(40)].map((_,i)=>i/9); const pts=xs.map(x=>[x, 0.4*x*x + 0.6*x + 1 + randn(0,0.15)]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs), ys=pts.map(p=>p[1]); const minY=Math.min(...ys), maxY=Math.max(...ys);
+  const x2px=scaler(minX,maxX,pad,W-pad,false), y2px=scaler(minY,maxY,pad,H-pad,true);
+  drawAxes(ctx,W,H,pad,'x','y',minX,maxX,minY,maxY);
+  ctx.fillStyle='#71b7ff'; pts.forEach(([x,y])=>{ctx.beginPath(); ctx.arc(x2px(x),y2px(y),3.5,0,Math.PI*2); ctx.fill();});
+  // 直線
+  const L=(x)=>0.7*x+1.2; ctx.strokeStyle='#e8eef7'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x2px(minX),y2px(L(minX))); ctx.lineTo(x2px(maxX),y2px(L(maxX))); ctx.stroke();
+  // 二次
+  const Q=(x)=>0.4*x*x+0.6*x+1.0; ctx.strokeStyle='#66e6d4'; ctx.lineWidth=2; ctx.beginPath(); for(let x=minX;x<=maxX;x+=0.02){ const y=Q(x); const px=x2px(x), py=y2px(y); if(x===minX) ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.stroke();
+  // 高次（過擬合感）
+  const Hh=(x)=>Q(x)+0.2*Math.sin(10*x); ctx.strokeStyle='#ffb86b'; ctx.lineWidth=1.5; ctx.beginPath(); for(let x=minX;x<=maxX;x+=0.01){ const y=Hh(x); const px=x2px(x), py=y2px(y); if(x===minX) ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.stroke();
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('白:直線  青:二次  橙:高次（易過擬合）', pad+6, pad+14);
+}
+
+// === Boolean 圖示 ===
+function drawTruthTableSketch(canvas,markFixed=false){
+  const ctx=canvas.getContext('2d'); const W=canvas.width=canvas.clientWidth, H=canvas.height=canvas.clientHeight;
+  ctx.fillStyle='#0e141d'; ctx.fillRect(0,0,W,H);
+  const left=40, top=40, rowH=36, colW=[80,80,120];
+  ctx.fillStyle='#9fb3c8'; ctx.fillText('x₁', left+10, top-10); ctx.fillText('x₂', left+colW[0]+10, top-10); ctx.fillText('輸出', left+colW[0]+colW[1]+10, top-10);
+  const rows=[[0,0],[0,1],[1,0],[1,1]];
+  rows.forEach((r,i)=>{
+    const y=top+i*rowH;
+    ctx.strokeStyle='#223044'; ctx.strokeRect(left, y-24, colW[0], rowH);
+    ctx.strokeRect(left+colW[0], y-24, colW[1], rowH);
+    ctx.strokeRect(left+colW[0]+colW[1], y-24, colW[2], rowH);
+    ctx.fillStyle='#e8eef7'; ctx.fillText(String(r[0]), left+colW[0]-26, y); ctx.fillText(String(r[1]), left+colW[0]+colW[1]-26, y);
+    if(markFixed && i===0){ ctx.fillStyle='#71b7ff'; ctx.fillText('1（已知）', left+colW[0]+colW[1]+20, y); }
+  });
+}
+
+// === 初始化 & 批改 ===
+const storeKey='ml-quiz-reg-bool-v1';
+function saveState(){ const data={}; $$('input[type=radio]:checked').forEach(r=>data[r.name]=r.value); $$('input.txt').forEach(t=>data[t.name]=t.value); localStorage.setItem(storeKey, JSON.stringify(data)); }
+function loadState(){ try{ const data=JSON.parse(localStorage.getItem(storeKey)||'{}'); Object.entries(data).forEach(([k,v])=>{ const r=document.querySelector(`input[name="${k}"][value="${v}"]`); if(r) r.checked=true; const t=document.querySelector(`input[name="${k}"]`); if(t) t.value=v;}); }catch(e){} }
+function resetState(){ localStorage.removeItem(storeKey); location.reload(); }
+$('#btnReset').addEventListener('click', resetState); addEventListener('change', saveState); addEventListener('input', saveState); loadState();
+
+function gradeR(){
+  const key={'R.Q1':'A','R.Q2':'A','R.Q3':'D'};
+  const exp={
+    'R.Q1':'MSE：E(g|X)=(1/N)∑[r^t−g(x^t)]²；平方懲罰大誤差。',
+    'R.Q2':'線性回歸指對參數線性的一次模型：g(x)=w₁x+w₀。',
+    'R.Q3':'複雜度↑先降訓練誤差，但過高會過擬合；二次常比一次貼趨勢。'
+  };
+  let correct=0,total=Object.keys(key).length, lines=[];
+  Object.entries(key).forEach(([q,ans])=>{
+    const chosen=document.querySelector(`input[name="${q}"]:checked`);
+    if(!chosen){ lines.push(`${q}: ⚠️ 未作答`); return; }
+    const ok=chosen.value===ans; if(ok) correct++;
+    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+chosen.value+'；正解: '+ans+'）'}`);
+    lines.push('解析：'+exp[q]);
+  });
+  $('#scoreR').textContent=`總分：${correct} / ${total}`;
+  $('#outR').textContent=lines.join('\n');
+}
+
+function normalizeNum(s){
+  const t=(s||'').toString().trim().replace(/[，,\s]/g,'');
+  const map={'０':'0','１':'1','２':'2','３':'3','４':'4','５':'5','６':'6','７':'7','８':'8','９':'9'};
+  let u=''; for(const ch of t){ u+= (map[ch] ?? ch); }
+  // 中文小寫常用數字（只用到 8、16）
+  if(u==='十六') return '16';
+  if(u==='八') return '8';
+  return u;
+}
+function gradeB(){
+  const ans={'B.Q1':['16'],'B.Q2':['8']};
+  const exp={'B.Q1':'2^4=16（四個輸入情境，各自 0/1）','B.Q2':'2^3=8（其餘三格自由 0/1）'};
+  let correct=0,total=2, lines=[];
+  Object.entries(ans).forEach(([q,arr])=>{
+    const v=normalizeNum(($(`input[name="${q}"]`)||{}).value);
+    if(!v){ lines.push(`${q}: ⚠️ 未作答`); return; }
+    const ok=arr.includes(v); if(ok) correct++;
+    lines.push(`${q}: ${ok?'✅ 正確':'❌ 錯誤（你的答案: '+v+'；正解: '+arr[0]+'）'}`);
+    lines.push('解析：'+exp[q]);
+  });
+  $('#scoreB').textContent=`總分：${correct} / ${total}`;
+  $('#outB').textContent=lines.join('\n');
+}
+
+$$('button[data-grade]').forEach(btn=>btn.addEventListener('click',e=>{
+  const p=e.currentTarget.getAttribute('data-grade');
+  if(p==='R') gradeR(); else if(p==='B') gradeB();
+  saveState();
+}));
+
+// 繪圖
+(function init(){
+  const Qr=$$('#partR .q'); drawRegressionWithResiduals(Qr[0].querySelector('canvas')); drawModelForms(Qr[1].querySelector('canvas')); drawThreeFits(Qr[2].querySelector('canvas'));
+  const Qb=$$('#partB .q'); drawTruthTableSketch(Qb[0].querySelector('canvas'), false); drawTruthTableSketch(Qb[1].querySelector('canvas'), true);
+  setTimeout(()=>{ // 檢查 Canvas
+    const canv=$$('canvas'); const ok = canv.length>0 && canv.every(c=>{ try{const ctx=c.getContext('2d'); const data=ctx.getImageData(0,0,c.width,c.height).data; let nz=0; for(let i=0;i<100;i++){ const k=(Math.floor(Math.random()*data.length/4)*4); if(data[k]+data[k+1]+data[k+2]!==0) nz++; } return nz>5; }catch(e){ return false; }});
+    const badge=$('#chk-canvas'); badge.classList.add('badge', ok?'ok':'err'); badge.textContent=(ok?'✅ ':'❌ ')+(ok?'Canvas 渲染 OK':'Canvas 未成功渲染');
+  }, 400);
+})();
+
+// 下載本頁
+const btnSaveEl=$('#btnSave'); if(btnSaveEl){ btnSaveEl.addEventListener('click',()=>{ const blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz_reg_bool_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); }); } const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='quiz_reg_bool_selfcheck.html'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),800); });
+</script>
+</body>
+</html>
